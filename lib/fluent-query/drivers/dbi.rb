@@ -41,6 +41,18 @@ module FluentQuery
             def connection_string                
                 not_implemented
             end
+            
+            ##
+            # Returns authentification settings.
+            #
+            # @return [Array] with username and password
+            # @abstract
+            #
+            
+            public
+            def authentification
+                not_implemented
+            end
 
             ##
             # Opens the connection.

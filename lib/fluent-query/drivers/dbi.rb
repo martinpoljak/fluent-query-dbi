@@ -79,9 +79,12 @@ module FluentQuery
             
                 if not @_nconnection
                     require "dbi"
+                    
+                    # Gets authentification
+                    username, password = self.authentification
 
                     # Connects
-                    @_nconnection = ::DBI::connect(self.connection_string)
+                    @_nconnection = ::DBI::connect(self.connection_string, username, password)
                 end
 
                 return @_nconnection                    

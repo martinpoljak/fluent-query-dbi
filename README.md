@@ -4,7 +4,7 @@ Fluent Query
 **Fluent Query** is cool way how to write SQL queries. Or general way 
 how to convert series of method calls to string query in an universal 
 and system independent manner. It may sounds like a piece of magic, but 
-it works. It's inspired by [Dibi][1].
+it works. It's inspired by [Dibi][1]. See 
 
 ### General Principle
 
@@ -93,14 +93,16 @@ Contributing
 2. Create a branch (`git checkout -b 20101220-my-change`).
 3. Commit your changes (`git commit -am "Added something"`).
 4. Push to the branch (`git push origin 20101220-my-change`).
-5. Create an [Issue][2] with a link to your branch.
+5. Create an [Issue][3] with a link to your branch.
 6. Enjoy a refreshing Diet Coke and wait.
 
 Copyright
 ---------
 
-Copyright &copy; 2009-2011 [Martin Kozák][3]. See `LICENSE.txt` for
+Copyright &copy; 2009-2011 [Martin Kozák][4]. See `LICENSE.txt` for
 further details.
 
-[2]: http://github.com/martinkozak/fluent-query-dbi/issues
-[3]: http://www.martinkozak.net/
+[1]: http://dibiphp.com/
+[2]: http://github.com/martinkozak/fluent-query/issues
+[3]: http://github.com/martinkozak/fluent-query-dbi/issues
+[4]: http://www.martinkozak.net/

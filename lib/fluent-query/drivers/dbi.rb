@@ -1,9 +1,12 @@
 # encoding: utf-8
 require "abstract"
+require "hash-utils/object"   # >= 0.17.0
+require "hash-utils/array"
 
 require "fluent-query/drivers/sql"
 require "fluent-query/drivers/exception"
 require "fluent-query/drivers/shared/results/dbi"
+require "fluent-query/drivers/dbi/prepared"
 
 module FluentQuery
     module Drivers
@@ -14,18 +17,27 @@ module FluentQuery
          #
          
          class DBI < FluentQuery::Drivers::SQL
-
+         
             ##
-            # Contructor.
+            # Constructor.
             #
 
             public
             def initialize(connection)
-                if self.instance_of? FluentQuery::Drivers::DBI
+                if self.instance_of? DBI
                     not_implemented
                 end
 
                 super(connection)
+            end
+            
+            ##
+            # Returns preparation placeholder.
+            #
+            
+            public
+            def quote_placeholder
+                "?"
             end
          
             ##### EXECUTING
@@ -77,7 +89,7 @@ module FluentQuery
                     raise FluentQuery::Drivers::Exception::new("Connection is closed.")
                 end
             
-                if not @_nconnection
+                if @_nconnection.nil?
                     require "dbi"
                     
                     # Gets authentification
@@ -96,7 +108,7 @@ module FluentQuery
 
             public
             def close_connection!
-                if @_nconnection
+                if not @_nconnection.nil?
                     @_nconnection.disconnect
                 end
             end
@@ -108,7 +120,12 @@ module FluentQuery
             public
             def execute(query)
                 connection = self.native_connection
-                data = connection.execute(query)
+                
+                if query.array? and query.first.kind_of? FluentQuery::Drivers::DBI::Prepared
+                    data = query.execute(*query.second)
+                else
+                    data = connection.execute(query.to_s)
+                end
                 
                 return FluentQuery::Drivers::Shared::Results::DBI::new(data)
             end
@@ -138,6 +155,16 @@ module FluentQuery
             def execute_conditionally(query, sym, *args, &block)
                 not_implemented
             end
+            
+            ##
+            # Generates prepared query.
+            #
+            
+            public
+            def prepare(query)
+                FluentQuery::Drivers::DBI::Prepared::new(self.build_query(query, :prepare))
+            end
+            
         end
     end
 end

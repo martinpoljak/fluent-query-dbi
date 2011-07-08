@@ -122,7 +122,7 @@ module FluentQuery
                 connection = self.native_connection
                 
                 if query.array? and query.first.kind_of? FluentQuery::Drivers::DBI::Prepared
-                    data = query.execute(*query.second)
+                    data = query.first.execute(*query.second)
                 else
                     data = connection.execute(query.to_s)
                 end
@@ -162,7 +162,7 @@ module FluentQuery
             
             public
             def prepare(query)
-                FluentQuery::Drivers::DBI::Prepared::new(self.build_query(query, :prepare))
+                FluentQuery::Drivers::DBI::Prepared::new(self, query)
             end
             
         end

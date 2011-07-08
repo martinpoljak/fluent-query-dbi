@@ -2,7 +2,7 @@
 
 module FluentQuery
     module Drivers
-        class DBI
+        class DBI < FluentQuery::Drivers::SQL
 
             ##
             # DBI prepared query.
@@ -23,16 +23,22 @@ module FluentQuery
                 @query
                 
                 ##
-                # Holds compiled query form.
+                # Holds prepared query in native form.
                 #
                 
-                @compiled
+                @native
                 
                 ##
                 # Holds prepared query form.
                 #
                 
                 @prepared
+                
+                ##
+                # Holds directives matcher.
+                #
+                
+                @@matcher = nil
                 
                 ##
                 # Constructor.
@@ -44,15 +50,16 @@ module FluentQuery
                 end
                 
                 ##
-                # Returns compiled query form.
+                # Returns directives matcher.
                 #
                 
-                def compiled
-                    if @compiled.nil?
-                        @compiled = @query.compile!
+                def matcher
+                    if @@matcher.nil?
+                        directives = FluentQuery::Compiler::FORMATTING_DIRECTIVES.map { |s| s.to_s }
+                        @@matcher = Regexp::new("%%(?:" << directives.join("|") << ")(?:([^\w])|$)")
                     end
                     
-                    @compiled
+                    @@matcher
                 end
                 
                 ##
@@ -60,19 +67,25 @@ module FluentQuery
                 #
                 
                 def prepared
-                    if @prepared.nil? or @callbacks.nil?
-                        @prepared = ""
-                        
-                        self.compiled.raw.each do |token|
-                            if token.kind_of? Proc
-                                @prepared << @driver.quote_placeholder
-                            else
-                                @prepared << token.to_s
-                            end
-                        end
+                    if @prepared.nil?
+                        string = @driver.build_query(@query, :compile)
+                        string.gsub!(self.matcher, '?\1')
+                        @prepared = string
                     end
                     
                     @prepared
+                end
+                
+                ##
+                # Returns prepared query in the native form.
+                #
+                
+                def native
+                    if @native.nil?
+                        @native = @driver.native_connection.prepare(self.prepared)
+                    end
+                    
+                    @native
                 end
                 
                 
@@ -80,7 +93,9 @@ module FluentQuery
                 # Executes the query.
                 #
                 
-                def execute
+                def execute(*args)
+                    self.native.execute(*args)
+                    self.native
                 end
                 
             end

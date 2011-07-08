@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "lib/fluent-query/drivers/dbi.rb",
+    "lib/fluent-query/drivers/dbi/prepared.rb",
     "lib/fluent-query/drivers/shared/results/dbi.rb"
   ]
   s.homepage = %q{http://github.com/martinkozak/fluent-query-dbi}

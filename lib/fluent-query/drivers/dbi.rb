@@ -44,26 +44,63 @@ module FluentQuery
             
             ##
             # Builds connection string according to settings.
-            #
             # @return [String] connection string
+            #
+            
+            public
+            def connection_string   
+                         
+                if @_nconnection_settings.nil?
+                    raise FluentQuery::Drivers::Exception::new('Connection settings hasn\'t been assigned yet.')
+                end
+                
+                # Gets settings
+                
+                server = @_nconnection_settings[:server]
+                port = @_nconnection_settings[:port]
+                socket = @_nconnection_settings[:socket]
+                database = @_nconnection_settings[:database]
+                
+                # Builds connection string and other parameters
+                
+                if server.nil?
+                    server = "localhost"
+                end
+                
+                connection_string = "DBI:%s:database=%s;host=%s" % [self.driver_name, database, server]
+                
+                if not port.nil?
+                    connection_string << ";port=" << port.to_s
+                end
+                if not socket.nil?
+                    connection_string << ";socket=" << socket
+                end
+
+                # Returns 
+                return connection_string
+                
+            end
+            
+            ##
+            # Returns DBI driver name.
+            #
+            # @return [String] driver name
             # @abstract
             #
             
             public
-            def connection_string                
+            def driver_name
                 not_implemented
             end
-            
+                        
             ##
             # Returns authentification settings.
-            #
             # @return [Array] with username and password
-            # @abstract
             #
             
             public
             def authentification
-                not_implemented
+                @_nconnection_settings.take_values(:username, :password)
             end
 
             ##
@@ -141,20 +178,6 @@ module FluentQuery
 
                 return count
             end
-
-            ##
-            # Executes query conditionally.
-            #
-            # If query isn't suitable for executing, returns it. In otherwise
-            # returns result or number of changed rows.
-            #
-            # @abstract
-            #
-
-            public
-            def execute_conditionally(query, sym, *args, &block)
-                not_implemented
-            end
             
             ##
             # Generates prepared query.
@@ -162,7 +185,7 @@ module FluentQuery
             
             public
             def prepare(query)
-                FluentQuery::Drivers::DBI::Prepared::new(self, query)
+                DBI::Prepared::new(self, query)
             end
             
         end

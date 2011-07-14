@@ -18,7 +18,7 @@ Jeweler::Tasks.new do |gem|
   gem.name = "fluent-query-dbi"
   gem.homepage = "http://github.com/martinkozak/fluent-query-dbi"
   gem.license = "MIT"
-  gem.summary = 'Generic DBI support for the Fluent Query.'
+  gem.summary = 'Generic DBI support for the Fluent Query. Fluent Query is cool way how to write SQL queries in Ruby. Contains base libraries used by specific SQL driver.'
   gem.email = "martinkozak@martinkozak.net"
   gem.authors = ["Martin Kozák"]
   # Include your dependencies below. Runtime dependencies are required when using your gem,

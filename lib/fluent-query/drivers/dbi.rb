@@ -2,6 +2,7 @@
 require "abstract"
 require "hash-utils/object"   # >= 0.17.0
 require "hash-utils/array"
+require "hash-utils/hash"
 
 require "fluent-query/drivers/sql"
 require "fluent-query/drivers/exception"

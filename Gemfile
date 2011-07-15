@@ -5,6 +5,7 @@ source "http://rubygems.org"
    gem "fluent-query", ">= 0.9.0"
    gem "abstract", ">= 1.0.0"
    gem "hash-utils", ">= 0.18.0"
+   gem "dbi", ">= 0.4.5"
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.

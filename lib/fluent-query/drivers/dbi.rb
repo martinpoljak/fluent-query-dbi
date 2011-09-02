@@ -34,6 +34,24 @@ module FluentQuery
             end
             
             ##
+            # Indicates, method is relevant for the driver.
+            #
+            # @since 0.9.2
+            # @abstract
+            #
+
+            public
+            def relevant_method?(name)
+                if name.start_with? "prepare_"
+                    _name = name[8..-1].to_sym
+                else
+                    _name = name
+                end
+                
+                super(_name)
+            end
+            
+            ##
             # Returns preparation placeholder.
             #
             
@@ -202,7 +220,6 @@ module FluentQuery
             public
             def check_conditionally(query, sym, *args, &block)
                 if sym.start_with? "prepare_" 
-                    sym = sym[8..-1].to_sym
                     self.prepare_conditionally(query, sym, *args, &block)
                 else
                     super(query, sym, *args, &block)
@@ -234,6 +251,22 @@ module FluentQuery
                 end
                 
                 return result
+            end
+            
+            ##
+            # Corrects token before it's pushed to the token. So allows to
+            # modify data assigned to the query from driver level.
+            #
+            # @since 0.9.2
+            #
+            
+            public
+            def correct_token(name, args)
+                if name.start_with? "prepare_" 
+                    name = name[8..-1].to_sym
+                end
+                
+                return [name, args]
             end
             
         end

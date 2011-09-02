@@ -68,11 +68,11 @@ module FluentQuery
                 
                 def prepared
                     if @prepared.nil?
-                        string = @driver.build_query(@query, :compile)
+                        string = @driver.build_query(@query, :prepare)
                         string.gsub!(self.matcher, '?\1')
                         @prepared = string
                     end
-                    
+                    p @prepared
                     @prepared
                 end
                 

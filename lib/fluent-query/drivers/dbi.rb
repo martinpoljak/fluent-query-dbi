@@ -1,6 +1,7 @@
 # encoding: utf-8
 require "abstract"
 require "hash-utils/object"   # >= 0.17.0
+require "hash-utils/symbol"
 require "hash-utils/array"
 require "hash-utils/hash"
 
@@ -187,6 +188,52 @@ module FluentQuery
             public
             def prepare(query)
                 DBI::Prepared::new(self, query)
+            end
+                                
+            ##
+            # Checks query conditionally. It's called after first token
+            # of the query.
+            #
+            # @see FluentQuery::Drivers::SQL#execute_conditionally
+            # @see #prepare_conditionally
+            # @since 0.9.2
+            #
+            
+            public
+            def check_conditionally(query, sym, *args, &block)
+                if sym.start_with? "prepare_" 
+                    sym = sym[8..-1]
+                    self.prepare_conditionally(query, sym, *args, &block)
+                else
+                    super(query, sym, *args, &block)
+                end
+            end
+            
+            ##
+            # Prepares query conditionally.
+            #
+            # If query isn't suitable for preparing, returns it. In otherwise
+            # returns +nil+, result or number of changed rows.
+            # 
+            # @since 0.9.2
+            #
+
+            public
+            def prepare_conditionally(query, sym, *args, &block)
+                case query.type
+                    when :insert
+                        if (args.first.symbol?) and (args.second.hash?)
+                            result = query.prepare!
+                        end
+                    when :truncate
+                        if args.first.symbol?
+                            result = query.prepare!
+                        end
+                    else
+                        result = nil
+                end
+                
+                return result
             end
             
         end

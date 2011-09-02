@@ -202,7 +202,7 @@ module FluentQuery
             public
             def check_conditionally(query, sym, *args, &block)
                 if sym.start_with? "prepare_" 
-                    sym = sym[8..-1]
+                    sym = sym[8..-1].to_sym
                     self.prepare_conditionally(query, sym, *args, &block)
                 else
                     super(query, sym, *args, &block)

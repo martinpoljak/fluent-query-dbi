@@ -72,7 +72,7 @@ module FluentQuery
                         string.gsub!(self.matcher, '?\1')
                         @prepared = string
                     end
-                    p @prepared
+#p @prepared
                     @prepared
                 end
                 

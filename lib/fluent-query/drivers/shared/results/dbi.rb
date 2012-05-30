@@ -30,6 +30,12 @@ module FluentQuery
                     @@_sources = { }
                     
                     ##
+                    # Holds column names cache.
+                    #
+                    
+                    @@column_names = nil
+                    
+                    ##
                     # Initializes result.
                     #
 
@@ -72,9 +78,10 @@ module FluentQuery
                     public
                     def one
                         row = @_source.fetch_hash
-
+                        
                         if row
-                            result = FluentQuery::Data[row]
+                            row = row.map_keys { |i| i.to_sym }
+                            result = FluentQuery::Data::new(row)
                         else
                             result = nil
                         end
@@ -126,6 +133,19 @@ module FluentQuery
                     def each(&block)
                         self.hash &block
                     end
+                    
+                    ##
+                    # Returns the column names.
+                    #
+                    
+                    public
+                    def column_names
+                        if @@column_names.nil?
+                            @@column_names = @_source.column_names.map { |i| i.to_sym }
+                        end
+                        
+                        @@column_names
+                    end
 
                     ##
                     # Repeats the query leaded to the result.
@@ -133,8 +153,8 @@ module FluentQuery
 
                     public
                     def repeat!
-                        @_source.execute
-                        return self
+                        @_source.execute()
+                        self
                     end
 
                     ##

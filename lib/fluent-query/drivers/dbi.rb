@@ -1,9 +1,6 @@
 # encoding: utf-8
 require "abstract"
-require "hash-utils/object"   # >= 0.17.0
-require "hash-utils/symbol"
-require "hash-utils/array"
-require "hash-utils/hash"
+require "hash-utils"   # >= 0.17.0
 
 require "fluent-query/drivers/sql"
 require "fluent-query/drivers/exception"
